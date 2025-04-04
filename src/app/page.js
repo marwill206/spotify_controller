@@ -1,6 +1,9 @@
 "use client";
 import Image from "next/image";
 import { useEffect } from "react";
+import { io } from "socket.io-client";
+
+let socket;
 
 export default function Home() {
   const handleLogin = async () => {
@@ -10,9 +13,17 @@ export default function Home() {
   };
 
   useEffect(() => {
-   
+    socket = io("http://localhost:3002");
 
+    socket.on("connect", () => {
+      console.log("connected");
+    });
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
 
+  useEffect(() => {
     const checkAuth = async () => {
       const res = await fetch("/api/auth/status");
       const { authenticated } = await res.json();
@@ -26,8 +37,25 @@ export default function Home() {
   }, []);
 
   const handlePause = () => {
-    const accessToken = localStorage.getItem("access_token");
-    socket.emit("pause", accessToken);
+    
+    const cookies = Object.fromEntries(
+      document.cookie.split("; ").map((cookie) => cookie.split("="))
+    );
+
+    const token = cookies["access_token"]; 
+    console.log("Access Token:", token);
+
+    if (!token) {
+      console.error("Access token is missing");
+      return;
+    }
+
+    if (!socket || !socket.connected) {
+      console.error("Socket is not initialized or connected");
+      return;
+    }
+
+    socket.emit("pause", token); 
   };
 
   const handleNext = () => {
@@ -43,9 +71,15 @@ export default function Home() {
       <button className=" cursor-pointer" onClick={handleLogin}>
         Login-out
       </button>
-      <button className=" cursor-pointer"  onClick={handlePrevious}>Back</button>
-      <button className=" cursor-pointer" onClick={handlePause}>Pause</button>
-      <button className=" cursor-pointer" onClick={handleNext}>Forward</button>
+      <button className=" cursor-pointer" onClick={handlePrevious}>
+        Back
+      </button>
+      <button className=" cursor-pointer" onClick={handlePause}>
+        Pause
+      </button>
+      <button className=" cursor-pointer" onClick={handleNext}>
+        Forward
+      </button>
     </main>
   );
 }

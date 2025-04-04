@@ -19,9 +19,9 @@ export async function GET(req) {
     return new Response(null, {
       status: 302,
       headers: {
-        "set-Cookie": [
-          `access_token=${accessToken}; Path=/; HttpOnly; SameSite=Strict`,
-          `refresh_token=${refreshToken}; Path=/; HttpOnly SameSite=Strict`,
+        "Set-Cookie": [
+          `access_token=${accessToken}; Path=/; SameSite=Strict`,
+          `refresh_token=${refreshToken}; Path=/; HttpOnly; SameSite=Strict`,
         ],
         Location: "/",
       },

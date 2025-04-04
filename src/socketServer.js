@@ -1,23 +1,30 @@
 import { Server } from "socket.io";
 import SpotifyWebApi from "spotify-web-api-node";
 
-const io = new Server(3001, { // Ensure "Server" is used here
+const io = new Server(3002, {
   cors: {
     origin: "*",
   },
 });
 
+const spotifyApi = new SpotifyWebApi();
+
 io.on("connection", (socket) => {
   console.log("A user connected");
-
-  socket.on("pause", async (accessToken) => {
+  
+  socket.on("pause", async (token) => {
     try {
-      const spotifyApi = new SpotifyWebApi();
-      spotifyApi.setAccessToken(accessToken);
+      if (!token) {
+        console.error("No access token provided");
+        return;
+      }
+  
+      spotifyApi.setAccessToken(token);
+  
       await spotifyApi.pause();
       console.log("Playback paused");
-    } catch (error) {
-      console.error("Error pausing playback:", error.message);
+    } catch (error) { // Add the error parameter here
+      console.error("Error pausing playback:", error.message); // Properly log the error
     }
   });
 
