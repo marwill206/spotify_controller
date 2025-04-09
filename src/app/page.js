@@ -1,11 +1,13 @@
 "use client";
 import Image from "next/image";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 
 let socket;
 
 export default function Home() {
+  const [pause, setPause] = useState(0);
+
   const handleLogin = async () => {
     const res = await fetch("/api/auth/login");
     const { url } = await res.json();
@@ -36,13 +38,16 @@ export default function Home() {
     checkAuth();
   }, []);
 
+  const switchPause = () => {
+    setPause((prevPause) => (prevPause === 0 ? 1 : 0));
+  };
+
   const handlePause = () => {
-    
     const cookies = Object.fromEntries(
       document.cookie.split("; ").map((cookie) => cookie.split("="))
     );
 
-    const token = cookies["access_token"]; 
+    const token = cookies["access_token"];
     console.log("Access Token:", token);
 
     if (!token) {
@@ -55,15 +60,70 @@ export default function Home() {
       return;
     }
 
-    socket.emit("pause", token); 
+    socket.emit("pause", token);
+  };
+
+  const handleStart = () => {
+    const cookies = Object.fromEntries(
+      document.cookie.split("; ").map((cookie) => cookie.split("="))
+    );
+
+    const token = cookies["access_token"];
+    console.log("Access Token:", token);
+
+    if (!token) {
+      console.error("Access token is missing");
+      return;
+    }
+
+    if (!socket || !socket.connected) {
+      console.error("Socket is not initialized or connected");
+      return;
+    }
+
+    socket.emit("play", token);
   };
 
   const handleNext = () => {
-    socket.emit("next");
+    const cookies = Object.fromEntries(
+      document.cookie.split("; ").map((cookie) => cookie.split("="))
+    );
+
+    const token = cookies["access_token"];
+    console.log("Access Token:", token);
+
+    if (!token) {
+      console.error("Access token is missing");
+      return;
+    }
+
+    if (!socket || !socket.connected) {
+      console.error("Socket is not initialized or connected");
+      return;
+    }
+
+    socket.emit("next track", token);
   };
 
   const handlePrevious = () => {
-    socket.emit("previous");
+    const cookies = Object.fromEntries(
+      document.cookie.split("; ").map((cookie) => cookie.split("="))
+    );
+
+    const token = cookies["access_token"];
+    console.log("Access Token:", token);
+
+    if (!token) {
+      console.error("Access token is missing");
+      return;
+    }
+
+    if (!socket || !socket.connected) {
+      console.error("Socket is not initialized or connected");
+      return;
+    }
+
+    socket.emit("previous track", token);
   };
 
   return (
@@ -74,9 +134,27 @@ export default function Home() {
       <button className=" cursor-pointer" onClick={handlePrevious}>
         Back
       </button>
-      <button className=" cursor-pointer" onClick={handlePause}>
-        Pause
-      </button>
+      {pause === 0 ? (
+        <button
+          className="  cursor-pointer"
+          onClick={() => {
+            handlePause();
+            switchPause();
+          }}
+        >
+          Pause
+        </button>
+      ) : (
+        <button
+          className="  cursor-pointer"
+          onClick={() => {
+            handleStart();
+            switchPause();
+          }}
+        >
+          play
+        </button>
+      )}
       <button className=" cursor-pointer" onClick={handleNext}>
         Forward
       </button>
