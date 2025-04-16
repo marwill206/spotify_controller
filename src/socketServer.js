@@ -13,8 +13,25 @@ io.on("connection", (socket) => {
   console.log("A user connected");
 
 socket.on("check playback state", async (token) => {
-  
-})
+  try {
+    if (!token) {
+      console.error("no acces token");
+      socket.emit("playback state", {error: "no acces"})
+      return;
+    }
+
+    spotifyApi.setAccessToken(token);
+
+    const playbackState = await spotifyApi.getMyCurrentPlaybackState();
+    if (playbackState.body && playbackState.body.is_playing !== undefined) {
+      socket.emit("playback state", {isPlaying: playbackState.body.is_playing});
+    }else {
+      socket.emit("playback state", {error: "no active playback"})
+    }
+  } catch (error) {
+    console.error("Error checking playback state:", error.message);
+  }
+});
 
   socket.on("pause", async (token) => {
     try {
