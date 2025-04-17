@@ -206,8 +206,6 @@ export default function Home() {
       return;
     }
 
-    
-
     socketRef.current.emit("play song", { token: accessToken, uri });
   };
 
@@ -305,13 +303,16 @@ export default function Home() {
             </button>
           </div>
           <div>
-            <ul className="mt-4 overflow-auto h-96 flex flex-col gap-3 ">
+            <ul className="m-4 overflow-auto h-96 flex flex-col gap-3 ">
               {Array.isArray(searchResults) && searchResults.length > 0 ? (
                 searchResults.map((track) => (
-                  <li key={track.id}>
+                  <li
+                    className="bg-amber-100 rounded-2xl p-3 flex flex-row justify-between "
+                    key={track.id}
+                  >
                     <div>
-                      <p>{track.name}</p>
-                      <p>
+                      <p className="text-black font-bold">{track.name}</p>
+                      <p className="text-black">
                         {track.artists
                           ? track.artists
                               .map((artist) => artist.name)
@@ -319,8 +320,24 @@ export default function Home() {
                           : "Unknown Artist"}
                       </p>
                     </div>
-                    <button onClick={() => handlePlaySong(track.uri)}>
-                      play
+                    <button
+                      className="text-black"
+                      onClick={() => handlePlaySong(track.uri)}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="w-10"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M16.211 11.106L9.737 7.868A1.2 1.2 0 0 0 8 8.942v6.116a1.2 1.2 0 0 0 1.737 1.074l6.474-3.238a1 1 0 0 0 0-1.788"
+                        />
+                      </svg>
                     </button>
                   </li>
                 ))
