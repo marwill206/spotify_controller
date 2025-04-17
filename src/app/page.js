@@ -30,9 +30,9 @@ export default function Home() {
       if (socketRef.current && accessToken) {
         socketRef.current.emit("check playback state", accessToken);
       }
-    }, 5000); // Check every 5 seconds
+    }, 5000); 
 
-    return () => clearInterval(interval); // Clear interval on unmount
+    return () => clearInterval(interval); 
   }, [accessToken]);
 
   useEffect(() => {
@@ -164,7 +164,7 @@ export default function Home() {
       });
 
     // Redirect to the login page or show a logged-out state
-    window.location.href = "/";
+    window.location.href = "https://www.spotify.com/logout/";
   };
 
   const handleSearch = async () => {
@@ -225,8 +225,8 @@ export default function Home() {
               <path
                 fill="none"
                 stroke="currentColor"
-                stroke-linejoin="round"
-                stroke-width="2.5"
+                strokeLinejoin="round"
+                strokeWidth="2.5"
                 d="M3 6.804v10.392c0 1.54 1.667 2.502 3 1.732l3-1.732V6.804L6 5.072c-1.333-.77-3 .192-3 1.732Zm18 3.464c1.333.77 1.333 2.694 0 3.464l-9 5.196c-1.333.77-3-.192-3-1.732V6.804c0-1.54 1.667-2.502 3-1.732z"
               />
             </svg>
@@ -264,9 +264,9 @@ export default function Home() {
                 <path
                   fill="none"
                   stroke="currentColor"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="1.5"
                   d="M18.89 12.846c-.353 1.343-2.023 2.292-5.364 4.19c-3.23 1.835-4.845 2.752-6.146 2.384a3.25 3.25 0 0 1-1.424-.841C5 17.614 5 15.743 5 12s0-5.614.956-6.579a3.25 3.25 0 0 1 1.424-.84c1.301-.37 2.916.548 6.146 2.383c3.34 1.898 5.011 2.847 5.365 4.19a3.3 3.3 0 0 1 0 1.692"
                   color="currentColor"
                 />
@@ -282,8 +282,8 @@ export default function Home() {
               <path
                 fill="none"
                 stroke="currentColor"
-                stroke-linejoin="round"
-                stroke-width="2.5"
+                strokeLinejoin="round"
+                strokeWidth="2.5"
                 d="M3 6.804v10.392c0 1.54 1.667 2.502 3 1.732l3-1.732V6.804L6 5.072c-1.333-.77-3 .192-3 1.732Zm18 3.464c1.333.77 1.333 2.694 0 3.464l-9 5.196c-1.333.77-3-.192-3-1.732V6.804c0-1.54 1.667-2.502 3-1.732z"
               />
             </svg>
@@ -332,9 +332,9 @@ export default function Home() {
                         <path
                           fill="none"
                           stroke="currentColor"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
                           d="M16.211 11.106L9.737 7.868A1.2 1.2 0 0 0 8 8.942v6.116a1.2 1.2 0 0 0 1.737 1.074l6.474-3.238a1 1 0 0 0 0-1.788"
                         />
                       </svg>
