@@ -7,6 +7,8 @@ import { debounce } from "lodash";
 export default function Home() {
   const [pause, setPause] = useState(0);
   const [accessToken, setAccessToken] = useState(null);
+  const [searchQuery, setSearchQuery] = useState([]);
+  const [searchResults, setSearchResults] = useState([]);
   const socketRef = useRef(null);
 
   useEffect(() => {
@@ -164,6 +166,51 @@ export default function Home() {
     // Redirect to the login page or show a logged-out state
     window.location.href = "/";
   };
+
+  const handleSearch = async () => {
+    if (!accessToken) {
+      console.error("not token");
+      return;
+    }
+
+    try {
+      const res = await fetch(
+        `https://api.spotify.com/v1/search?q=${encodeURIComponent(
+          searchQuery
+        )}&type=track&limit=10`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      const data = await res.json();
+      if (data.tracks && data.tracks.items) {
+        setSearchResults(data.tracks.items);
+      } else {
+        console.error("no tracks");
+      }
+    } catch (error) {
+      console.error("error tracks", error);
+    }
+  };
+
+  const handlePlaySong = (uri) => {
+    if (!accessToken) {
+      console.error("not token");
+      return;
+    }
+
+    if (!socketRef.current || !socketRef.current.connected) {
+      console.error("Socket is not initialized or connected");
+      return;
+    }
+
+    
+
+    socketRef.current.emit("play song", { token: accessToken, uri });
+  };
+
   return (
     <main className=" flex justify-center h-screen p-10">
       <div className="gap-3 flex flex-col bg-gray-500 w-70 rounded-4xl ">
@@ -243,6 +290,45 @@ export default function Home() {
               />
             </svg>
           </button>
+        </div>
+        <div>
+          <div>
+            <input
+              className="p-2 flex-grow"
+              placeholder="search songs"
+              value={searchQuery}
+              type="text"
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <button className="p-2 rounded" onClick={handleSearch}>
+              search
+            </button>
+          </div>
+          <div>
+            <ul className="mt-4 overflow-auto h-96 flex flex-col gap-3 ">
+              {Array.isArray(searchResults) && searchResults.length > 0 ? (
+                searchResults.map((track) => (
+                  <li key={track.id}>
+                    <div>
+                      <p>{track.name}</p>
+                      <p>
+                        {track.artists
+                          ? track.artists
+                              .map((artist) => artist.name)
+                              .join(", ")
+                          : "Unknown Artist"}
+                      </p>
+                    </div>
+                    <button onClick={() => handlePlaySong(track.uri)}>
+                      play
+                    </button>
+                  </li>
+                ))
+              ) : (
+                <p className="text-gray-500">No results found</p>
+              )}
+            </ul>
+          </div>
         </div>
       </div>
     </main>
